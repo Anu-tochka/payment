@@ -25,6 +25,10 @@ class Work
     #[ORM\Column(length: 10, nullable: true)]
     private ?string $trevelpayment = null;
 
+    #[ORM\ManyToOne(inversedBy: 'works')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?department $dep = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +78,18 @@ class Work
     public function setTrevelpayment(?string $trevelpayment): static
     {
         $this->trevelpayment = $trevelpayment;
+
+        return $this;
+    }
+
+    public function getDep(): ?department
+    {
+        return $this->dep;
+    }
+
+    public function setDep(?department $dep): static
+    {
+        $this->dep = $dep;
 
         return $this;
     }

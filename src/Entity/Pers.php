@@ -55,6 +55,9 @@ class Pers
     #[ORM\OneToMany(mappedBy: 'pers', targetEntity: Payment::class)]
     private Collection $payments;
 
+    #[ORM\OneToMany(mappedBy: 'pers', targetEntity: Salary::class)]
+    private Collection $salaries;
+
     public function __construct()
     {
         $this->singles = new ArrayCollection();
@@ -252,6 +255,28 @@ class Pers
             // set the owning side to null (unless already changed)
             if ($payment->getPers() === $this) {
                 $payment->setPers(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function addSalary(Salary $salary): static
+    {
+        if (!$this->salaries->contains($salary)) {
+            $this->salaries->add($salary);
+            $salary->setPers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeSalary(Salary $salary): static
+    {
+        if ($this->salaries->removeElement($salary)) {
+            // set the owning side to null (unless already changed)
+            if ($salary->getPers() === $this) {
+                $salary->setPers(null);
             }
         }
 
