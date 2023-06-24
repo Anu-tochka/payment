@@ -58,10 +58,14 @@ class Pers
     #[ORM\OneToMany(mappedBy: 'pers', targetEntity: Salary::class)]
     private Collection $salaries;
 
+    #[ORM\OneToMany(mappedBy: 'pers', targetEntity: Day::class)]
+    private Collection $days;
+
     public function __construct()
     {
         $this->singles = new ArrayCollection();
         $this->salaries = new ArrayCollection();
+        $this->days = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -277,6 +281,36 @@ class Pers
             // set the owning side to null (unless already changed)
             if ($salary->getPers() === $this) {
                 $salary->setPers(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Day>
+     */
+    public function getDays(): Collection
+    {
+        return $this->days;
+    }
+
+    public function addDay(Day $day): static
+    {
+        if (!$this->days->contains($day)) {
+            $this->days->add($day);
+            $day->setPers($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDay(Day $day): static
+    {
+        if ($this->days->removeElement($day)) {
+            // set the owning side to null (unless already changed)
+            if ($day->getPers() === $this) {
+                $day->setPers(null);
             }
         }
 
