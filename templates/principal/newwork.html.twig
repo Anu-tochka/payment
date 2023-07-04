@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавить новую должность{% endblock %}
+
+{% block body %}
+	<h1>Добавить новую должность</h1>
+	{% if d %}<p>Новая должность добавлена</p>{% endif %}
+	{{ form_start (wform) }}
+		{{ form_row (wform.workname, {
+            label: 'Название', 'value': ''
+        }) }}
+		{{ form_row (wform.cost, {
+            label: 'Стоимость часа', 'value': ''
+        }) }}
+		{{ form_row (wform.trevelpayment, {
+            label: 'Стоимость часа в командировке', 'value': ''
+        }) }}
+		{{ form_row (wform.rate, {
+            label: 'Ставка в месяц', 'value': ''
+        }) }}
+		<div><label for="depID">Подразделение</label>
+			<select name="depID" class="statuses">
+				{% for d in department %}<option value="{{ d.id }}">{{ d.depname }}</option>{% endfor %}
+			</select>
+		</div>
+		<button type="submit">Отправить</button>
+	{{ form_end (wform) }}
+{#{ now }#}
+{% endblock %}
+ 

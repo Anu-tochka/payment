@@ -1,2 +1,2 @@
 # Declare files that will always have CRLF line endings on checkout.
-*.php text eol=lf
+*.php text eol=crlf

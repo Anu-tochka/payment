@@ -27,7 +27,7 @@ class Work
 
     #[ORM\ManyToOne(inversedBy: 'works')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?department $dep = null;
+    private ?Department $dep = null;
 
     public function getId(): ?int
     {
@@ -82,12 +82,12 @@ class Work
         return $this;
     }
 
-    public function getDep(): ?department
+    public function getDep(): ?Department
     {
         return $this->dep;
     }
 
-    public function setDep(?department $dep): static
+    public function setDep(?Department $dep): static
     {
         $this->dep = $dep;
 

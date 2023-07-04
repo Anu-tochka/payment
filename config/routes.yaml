@@ -5,3 +5,8 @@ controllers:
 kernel:
     resource: ../src/Kernel.php
     type: annotation
+
+app_newwork:
+    path: /principal/newwork
+    controller: App\Controller\PrincipalController::newwork
+   
