@@ -33,14 +33,27 @@ class PrincipalController extends AbstractController
         $pers = $doctrine->getRepository(Pers::class)->findAllPersonal();
         return $this->render('principal/principal.html.twig', [ 
             'pers' => $pers,
-        ]);/*
-		$serializer = $this->get('serializer');
-			$json = $serializer->serialize($pers, 'json');
-
-			return new Response($json);
-			*/
+        ]);
     }
 	
+	// уволить
+	public function dismiss($persID, ManagerRegistry $doctrine, Request $request): Response	
+    {
+		$id = $request->get("persID");
+        $entity = $doctrine->getManager();
+		$dis = '';
+		if ($id){
+		//	$cont = $request->request;
+			$pers = $entity->getRepository(Pers::class)->find($id);
+			$pers->setIsWork(false);
+			$entity->flush();
+			$dis = 'ok'; 
+			$entity->clear();
+		
+		}	
+		return new Response($dis);	
+    }
+		
 	public function newwork(ManagerRegistry $doctrine, Request $request): Response	
     {
         $work = $doctrine->getRepository(Work::class)->findAll();

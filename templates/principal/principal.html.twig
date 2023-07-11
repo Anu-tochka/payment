@@ -2,6 +2,27 @@
 
 {% block title %}Сотрудники ООО "Моя компания"{% endblock %}
 
+{% block javascripts %}
+    <script type="text/javascript">
+		$(document).ready(function() {
+			$("button").on("click", function() {
+				let pers = $(this).attr('id');
+				let button = $(this);
+				console.log('pers: ' + pers);
+				$.ajax({
+					url: "/principal/dismiss/"+pers,
+					method: 'post',
+					data: pers,
+					success: function(data){
+						console.log('success!');
+						// скрыть кнопку
+					}
+				});
+			});
+		});
+	</script>
+{% endblock %}
+
 {% block body %}
 	
 <div class="menu">

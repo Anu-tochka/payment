@@ -18,4 +18,7 @@ app_newpers:
     path: /principal/newpers
     controller: App\Controller\PrincipalController::newpers
 
+app_dismiss:
+    path: /principal/dismiss/{persID}
+    controller: App\Controller\PrincipalController::dismiss
    
