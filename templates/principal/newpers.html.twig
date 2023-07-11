@@ -1,4 +1,4 @@
-{% extends 'base.html.twig' %}
+{% extends 'principal/principal.html.twig' %}
 
 {% block title %}Добавить нового сотрудника компании{% endblock %}
 
@@ -14,7 +14,7 @@
 		*/
 	</script>
 {% endblock %} 
-{% block body %}
+{% block main %}
 	<h1>Добавить нового сотрудника компании</h1>
 	{% if s %}<p>Новый сотрудник добавлен</p>{% endif %}
 	{{ form_start (pform) }}
