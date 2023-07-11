@@ -61,6 +61,10 @@ class Pers
     #[ORM\OneToMany(mappedBy: 'pers', targetEntity: Day::class)]
     private Collection $days;
 
+    #[ORM\ManyToOne(inversedBy: 'yes')]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Work $works = null;
+
     public function __construct()
     {
         $this->singles = new ArrayCollection();
@@ -111,24 +115,24 @@ class Pers
 
     public function getPassportS(): ?string
     {
-        return $this->passport_s;
+        return $this->passportS;
     }
 
-    public function setPassportS(?string $passport_s): static
+    public function setPassportS(?string $passportS): static
     {
-        $this->passport_s = $passport_s;
+        $this->passportS = $passportS;
 
         return $this;
     }
 
     public function getPassportN(): ?string
     {
-        return $this->passport_n;
+        return $this->passportN;
     }
 
-    public function setPassportN(?string $passport_n): static
+    public function setPassportN(?string $passportN): static
     {
-        $this->passport_n = $passport_n;
+        $this->passportN = $passportN;
 
         return $this;
     }
@@ -313,6 +317,18 @@ class Pers
                 $day->setPers(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getWorks(): ?Work
+    {
+        return $this->works;
+    }
+
+    public function setWorks(?Work $works): static
+    {
+        $this->works = $works;
 
         return $this;
     }

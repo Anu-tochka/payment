@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Добавить нового сотрудника компании{% endblock %}
+
+
+{% block javascripts %}
+    <script type="text/javascript">
+	/*	$(document).ready(function() {
+			let workers = $('.perstr');//attr('id');
+			$('.js-datepicker').datepicker({
+				format: 'dd.mm.yyyy'
+			});
+		});
+		*/
+	</script>
+{% endblock %} 
+{% block body %}
+	<h1>Добавить нового сотрудника компании</h1>
+	{% if s %}<p>Новый сотрудник добавлен</p>{% endif %}
+	{{ form_start (pform) }}
+		{{ form_row (pform.fam, {
+            label: 'Фамилия', 'value': ''
+        }) }}
+		{{ form_row (pform.im, {
+            label: 'Имя', 'value': ''
+        }) }}
+		{{ form_row (pform.ot, {
+            label: 'Отчество', 'value': ''
+        }) }}
+		{{ form_row (pform.DR, {
+            label: 'День рождения', 'value': ''
+        }) }}
+		{{ form_row (pform.passportS, {
+            label: 'Серия паспорта', 'value': ''
+        }) }}
+		{{ form_row (pform.passportN, {
+            label: 'Номер паспорта', 'value': ''
+        }) }}
+		{{ form_row (pform.passportD, {
+            label: 'Дата выдачи паспорта', 'value': ''
+        }) }}
+		{{ form_row (pform.passportBy, {
+            label: 'Кем выдан паспорт', 'value': ''
+        }) }}
+		{{ form_row (pform.INN, {
+            label: 'ИНН', 'value': ''
+        }) }}
+		{{ form_row (pform.employeeNum, {
+            label: 'Табельный номер', 'value': ''
+        }) }}
+		<div><label for="statusID">Должность</label><select name="statusID" class="statuses">{% for w in work %}<option value="{{ w.id }}">{{ w.workname }}</option>{% endfor %}</select></div>
+		<button type="submit">Отправить</button>
+	{{ form_end (pform) }}
+{% endblock %}
+ 

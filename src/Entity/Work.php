@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Repository\WorkRepository;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: WorkRepository::class)]
@@ -28,6 +30,14 @@ class Work
     #[ORM\ManyToOne(inversedBy: 'works')]
     #[ORM\JoinColumn(nullable: false)]
     private ?Department $dep = null;
+
+    #[ORM\OneToMany(mappedBy: 'works', targetEntity: Pers::class)]
+    private Collection $pers;
+
+    public function __construct()
+    {
+        $this->yes = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -90,6 +100,36 @@ class Work
     public function setDep(?Department $dep): static
     {
         $this->dep = $dep;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Pers>
+     */
+    public function getPers(): Collection
+    {
+        return $this->pers;
+    }
+
+    public function addPers(Pers $pers): static
+    {
+        if (!$this->yes->contains($pers)) {
+            $this->yes->add($pers);
+            $pers->setPers($this);
+        }
+
+        return $this;
+    }
+
+    public function removePers(Pers $pers): static
+    {
+        if ($this->yes->removeElement($pers)) {
+            // set the owning side to null (unless already changed)
+            if ($pers->getPers() === $this) {
+                $pers->setPers(null);
+            }
+        }
 
         return $this;
     }

@@ -27,7 +27,7 @@ class Day
     private ?float $total = null;
 
     #[ORM\ManyToOne(inversedBy: 'pers')]
-    private ?status $statuses = null;
+    private ?Status $statuses = null;
 
     #[ORM\ManyToOne(inversedBy: 'days')]
     #[ORM\JoinColumn(nullable: false)]
@@ -86,24 +86,24 @@ class Day
         return $this;
     }
 
-    public function getStatuses(): ?status
+    public function getStatuses(): ?Status
     {
         return $this->statuses;
     }
 
-    public function setStatuses(?status $statuses): static
+    public function setStatuses(?Status $statuses): static
     {
         $this->statuses = $statuses;
 
         return $this;
     }
 
-    public function getPers(): ?pers
+    public function getPers(): ?Pers
     {
         return $this->pers;
     }
 
-    public function setPers(?pers $pers): static
+    public function setPers(?Pers $pers): static
     {
         $this->pers = $pers;
 

@@ -10,3 +10,7 @@ app_newwork:
     path: /principal/newwork
     controller: App\Controller\PrincipalController::newwork
    
+app_newpers:
+    path: /principal/newpers
+    controller: App\Controller\PrincipalController::newpers
+   
