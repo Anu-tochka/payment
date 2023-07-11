@@ -27,6 +27,20 @@ class PrincipalController extends AbstractController
         $this->entityManager = $entityManager;
     }
 	
+	public function show(ManagerRegistry $doctrine): Response	
+    {
+		
+        $pers = $doctrine->getRepository(Pers::class)->findAllPersonal();
+        return $this->render('principal/principal.html.twig', [ 
+            'pers' => $pers,
+        ]);/*
+		$serializer = $this->get('serializer');
+			$json = $serializer->serialize($pers, 'json');
+
+			return new Response($json);
+			*/
+    }
+	
 	public function newwork(ManagerRegistry $doctrine, Request $request): Response	
     {
         $work = $doctrine->getRepository(Work::class)->findAll();

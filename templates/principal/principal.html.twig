@@ -1,0 +1,38 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Сотрудники ООО "Моя компания"{% endblock %}
+
+{% block body %}
+	
+<div class="menu">
+	<a href=" {{ path('app_principal') }}">Все сотрудники</a>
+	<a href=" {{ path('app_newwork') }}">Добавить новую должность</a>
+	<a href=" {{ path('app_newpers') }}">Добавить нового сотрудника</a>
+</div>
+<div class="main">
+{% block main %}
+<h1>Сотрудники ООО "Моя компания"</h1> 
+<table> 
+	<thead>
+	<tr class="thead"><th>ФИО</th><th>Должность</th><th>Табельный номер</th><th>Дата рождения</th><th>Паспорт</th><th>ИНН</th><th>&nbsp;</th></tr>
+	</thead>
+	<tbody>
+	{% for p in pers %}
+		<tr class="perstr" ><td> {{ p.fam }} {{ p.im }} {{ p.ot }}</td>
+			<td>{{ p.workname }}</td>	
+			<td>{{ p.employeeNum }}</td>	
+			<td>{% if p.dr %}{{ p.dr | date('d.m.Y') }}{% endif %}</td>
+			<td>{% if p.passportN %}Паспорт {{ p.passportS }} {{ p.passportN }}{% endif %}{% if p.passportBy %}, выдан {{ p.passportBy }} {{ p.passportD | date('d.m.Y') }}{% endif %}</td>
+			<td>{{ p.inn }}</td>
+			<td><button id="{{ p.persID }}" class="adminbutton">Уволить</button></td>
+		</tr>
+	{% else %}
+		No users have been found.
+	{% endfor %}
+	</tbody>
+</table>
+{% endblock %} 
+</div> 
+
+{% endblock %}
+ 

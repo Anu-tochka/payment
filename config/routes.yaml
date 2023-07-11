@@ -6,6 +6,10 @@ kernel:
     resource: ../src/Kernel.php
     type: annotation
 
+app_principal:
+    path: /principal
+    controller: App\Controller\PrincipalController::show
+
 app_newwork:
     path: /principal/newwork
     controller: App\Controller\PrincipalController::newwork
@@ -13,4 +17,5 @@ app_newwork:
 app_newpers:
     path: /principal/newpers
     controller: App\Controller\PrincipalController::newpers
+
    

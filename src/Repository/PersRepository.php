@@ -39,6 +39,19 @@ class PersRepository extends ServiceEntityRepository
         }
     }
 
+	public function findAllPersonal(): array
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT p.id as persID, p.fam, p.im, p.ot, p.dr, p.passportS, p.passportN, p.passportBy, p.passportD, p.inn, p.isWork, p.employeeNum, w.workname, w.rate as rate, w.cost, w.trevelpayment, w.id as workID
+            FROM App\Entity\Pers p
+			JOIN p.works w
+			WHERE p.isWork = 1 
+            ORDER BY p.fam ASC'
+        );
+        return $query->getResult();
+    }
+
 //    /**
 //     * @return Pers[] Returns an array of Pers objects
 //     */
