@@ -1,0 +1,55 @@
+body {
+    background-color: #fff;
+    font-size: 1.2em;
+}
+
+h1 {
+	margin: 30px 50px;
+	font-size: 2em;
+	text-align: center;
+    color: #006666;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+	align-items: stretch;
+}
+
+form div{
+	display: flex;
+    flex-direction: row;
+	justify-content: flex-start;
+	align-items: center;
+}	
+
+select{
+	display: block;
+	border-radius: 0;
+}
+
+input, select {
+	margin: 5px;
+    background-color: #B6ECEC;
+}
+
+button{
+	order-radius: 3px;
+    border: none;
+	box-shadow: none;
+    margin: 20px;
+    background-color: #ffd300;
+	background-size: cover;
+	color: #23301F;
+    width: 155px;
+    height: 40px;
+    font-size: 0.7em;
+}	
+
+button:hover{
+	cursor: pointer;
+}
+
+.hidepass {
+	display: none;
+}
