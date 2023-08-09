@@ -39,6 +39,21 @@ class DayRepository extends ServiceEntityRepository
         }
     }
 
+	public function isWorkToday($today, $idList): ?array//?Day
+    {
+        $entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT d.id as did, d.daynow, p.id as pid 
+            FROM App\Entity\Day d
+			JOIN d.pers p 
+			WHERE d.daynow = :day
+			AND p.id in (:p)'
+        ) 
+		->setParameter('day', $today)
+		->setParameter('p', $idList); 
+        return $query->getResult();
+    }
+
 //    /**
 //     * @return Day[] Returns an array of Day objects
 //     */

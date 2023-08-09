@@ -21,4 +21,12 @@ app_newpers:
 app_dismiss:
     path: /principal/dismiss/{persID}
     controller: App\Controller\PrincipalController::dismiss
+            
+app_office:
+    path: /office
+    controller: App\Controller\OfficeController::index
+       
+app_saveoffice:
+    path: /office/save
+    controller: App\Controller\OfficeController::save
    

@@ -1,0 +1,183 @@
+{% extends 'office/office.html.twig' %}
+
+{% block title %}Работа за {{ targetm.im }}{% endblock %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+		$(document).ready(function() {
+			function sethours() {
+				let st = $('#popup-status').val();
+				console.log('status: ' + st);
+				if ( st==1 || st==5 || st==7) {
+					$('#popup-hours').removeClass('hidepass');
+				}
+				else {
+					$('#popup-hours').find("option:contains('0')").prop("selected", true);
+						$('#popup-hours').addClass('hidepass');
+				}
+			}
+			
+			let targetMonth = $('h1').attr('data-month');
+			$('#popup').find('#popup-status').change(sethours);
+			
+			$(".menuMonth").on("change", function(){
+			    console.log('menuMonth: ');
+			    console.log($(this).val());
+				location.assign($(this).val());
+			});
+
+			$(".monthbutton").click(function() {
+				let status = $(this).attr('data-status');
+				console.log('status:*' + status+ '*');
+				let dayID = $(this).attr('id');//.text();
+				console.log('dayID: ' + dayID);
+				let myUrl = "";
+				let fio = $(this).attr('data-fio');
+				console.log('fio: ' + fio);
+				let work = $(this).attr('data-work');
+				if (dayID) {
+					myUrl = "/office/correctDay/"+dayID;
+				//	fio = $(this).attr('data-fio');
+					//work = $(this).attr('data-work');
+				}
+				else {
+					let target = $(this).attr('data-url');
+					myUrl = "/office/insertDay/"+target;
+				}
+				let hours = $(this).attr('data-hours');
+				$("#popup-fio").text(fio);//$('#popup').append( '' );
+				$("#popup-workname").text(work);
+				$('#popup-f').fadeIn();
+				$('#popup-status').find("option:contains(status)").prop("selected", true);
+				console.log('status:|' + status+ '|');
+				$("#button-popup").attr('data-button', myUrl);
+				$("#button-popup").attr('data-dayID', dayID);
+				return false;
+			//	location.assign(myUrl);
+			});
+			
+			$(document).keydown(function(e) {
+				if (e.keyCode === 27) {
+					e.stopPropagation();
+					$('#popup-f').fadeOut();
+				}
+			});
+			
+			$('#popup-f').click(function(e) {
+				if ($(e.target).closest('#popup').length == 0) {
+					$(this).fadeOut();					
+				}
+			});
+			
+			$("#button-popup").click(function() {
+				let myUrl = $(this).attr('data-button');
+				let simple = {};
+				let trevel = 0;
+				let hours = 0;
+				let ho = '';
+				let st = $('#popup-status').val();
+				trevel = $(this).find('.trevelpayment').val();
+				simple.statusID = st;
+				console.log('simple.statusID popup: ' + simple.statusID);
+				ho = $('#popup-hours').val();
+				console.log('hours popup: ' + ho);
+				hours = (Number(ho)).toFixed(1);
+				simple.hours = hours;
+			/*	if (simple.statusID == '5') {	// если командировка
+					simple.total = trevel * hours;
+				}
+				if (simple.statusID == '7') {	// если работа в выходной
+					simple.total = trevel * hours*1.5;
+				}*/
+				$.ajax({
+					url: myUrl,
+					method: 'post',
+					data: simple,
+					success: function(data){
+						location.assign("/office/showMonth/"+targetMonth);
+						/*$('#popup-f').fadeOut();
+						let str = '[data-setstatus="'+myUrl+'"]';
+						console.log(data);
+						$(str).text(st);*/
+					}
+				});
+			});
+		});
+	</script>
+{% endblock %}
+
+{% block headline %}
+<h1 data-month="{{ targetm.n }}">Работа административного отдела за {{ targetm.im }}</h1>
+{% endblock %} 
+{% block main %} 
+<div class="monthtable">
+<div>
+	<table> 
+		<thead>
+			<tr class="thead1"><th class="fio"> </th><th class="workname"> </th></tr>
+			<tr class="thead2"><th class="fio">ФИО</th><th class="workname">Должность</th></tr>
+		</thead>
+		<tbody>
+		{% for p in pers %}
+			<tr>
+				<td class="fio"> {{ p.fam }} {{ p.im }} {{ p.ot }}</td>
+				<td class="workname"><input type="hidden" class="trevel" name="trevel" value="{{ p.trevelpayment }}"></input>{{ p.workname }}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>	
+<div class="monthscroll">
+	<table>
+		<thead>
+			<tr class="thead1">
+				{% for d in day %}<th colspan=3>{{ d | date('d.m.Y') }}</th>{% endfor %}
+			</tr>
+			<tr class="thead2">
+				{% for d in day %}<th class="tditem">Статус</th><th class="tditem">Кол-во часов</th><th class="tditem"></th>{% endfor %}
+			</tr>
+		</thead>
+		<tbody>
+		{% for pd in persDays %}
+			<tr id="{{ pd.persID }}">
+			{% for child in pd.data %}
+				{% if child.find==[] %}
+						<td class="tditem" data-setstatus="{{ child.daynow }}/{{ pd.persID }}" >&nbsp</td>
+						<td class="tditem" data-sethours="{{ child.daynow }}/{{ pd.persID }}" >&nbsp</td>
+						<td class="tditem"><button class="monthbutton" id="" data-url="{{ child.daynow }}/{{ pd.persID }}" data-fio="{{ pd.fio }}" data-work="{{ pd.work }}">&#9998;</button></td>
+				{% else %}
+					{% for c in child.find %}
+						<td class="tditem" data-setstatus="{{ c.dayID }}" >{{ c.statusname }}</td>
+						<td class="tditem" data-sethours="{{ c.dayID }}" >{{ c.hours }}</td>
+						<td class="tditem"><button class="monthbutton" id="{{ c.dayID }}" data-fio="{{ pd.fio }}" data-work="{{ pd.work }}" data-status="{{ c.statusname }}" data-hours="{{ c.hours }}">&#9998;</button></td>
+					{% endfor %}
+				{% endif %}
+					
+			{% endfor %}
+			</tr>
+		{% endfor %}
+	
+		</tbody>
+	</table>
+</div>
+</div>
+{#<div id="status">{{ today }}<br></div>#}
+<div id="popup-f">	
+	<div id="popup">
+	<table> 
+	<thead>
+	<tr class="thead2"><th>ФИО</th><th>Должность</th><th>Статус</th><th>Кол-во часов</th></tr>
+	</thead>
+	<tbody><tr><td id="popup-fio"></td>
+	<td id="popup-workname"></td>
+	<td><select name="statusID" class="statuses" id="popup-status">
+				{% for s in statuses %}<option value="{{ s.id }}" data-popup-status="{{ s.statusname }}">{{ s.statusname }}</option>{% endfor %}</select></td>
+			<td><select name="hours" class="hours" id="popup-hours">
+				{% for h in hours %}<option value="{{ h }}" data-popup-hours="{{ h }}">{{ h }}</option>{% endfor %}<option value="0">0</option>
+			</select></td>
+	</tr></tbody></table><button type="submit" data-button="" data-dayID="" id="button-popup">Отправить</button>
+	</div>		
+</div>
+{% endblock %} 
+
+ 

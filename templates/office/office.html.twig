@@ -1,0 +1,105 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+{% block javascripts %}
+    <script type="text/javascript">
+		$(document).ready(function() {
+			let workers = $('.perstr');
+			let d = new Date();
+			let m = ('0'+(d.getMonth()+1)).slice(-2);
+			workers.each(function(index, elem) {
+				$(elem).find('.statuses').change(function() {
+					let st = $(elem).find('.statuses').val();
+					console.log('status: ' + st);
+					if ( st==1 || st==5 || st==7) {
+						$(elem).find('.hours').removeClass('hidepass');
+					}
+					else {
+						$(elem).find('.hours').find("option:contains('0')").prop("selected", true);
+						$(elem).find('.hours').addClass('hidepass');
+					}
+				})
+			});
+			
+			$(".menuMonth").on("change", function(){
+			    console.log('menuMonth: ');
+			    console.log($(this).val());
+				location.assign($(this).val());
+			});
+
+			$("#tableform").on("submit", function(e){
+				e.preventDefault();
+				let reqq = [];
+				workers.each(function() {
+				//	console.log('worker 1: ' + workers[0]);
+					let persID = $(this).attr('id');//.text();
+					let simple = {};
+					let hours = 0;
+					let ho = '';
+					console.log('persID: ' + persID);
+					simple.persID = persID;
+					simple.daynow = $(this).find('.daynow').val();
+					simple.statusID = $(this).find('.statuses').val();
+					if (simple.statusID >0) {
+						ho = $(this).find('.hours').val();
+						console.log('hours: ' + ho);
+						hours = (Number(ho)).toFixed(1);
+						simple.hours = hours;
+						reqq.push(simple);
+					}
+				});
+				
+				$.ajax({
+					url: "/office/save",
+					method: 'post',
+					data: { reqq },
+					success: function(data){
+						location.assign("/office/showMonth/"+m);
+					}
+				});
+			});
+		});
+		
+	</script>
+{% endblock %}
+
+<div class="header">
+<div class="year">
+	<span>{{ year }}</span>
+	<select name="targetMonth" class="menuMonth">
+		{% for a in curmonthes %}<option value="/office/showMonth/{{ a.n }}">{{ a.im }}</option>{% endfor %}
+	</select>
+</div>
+</div>
+
+<div class="main">
+{% block main %} 
+<form method="post" id="tableform" class="ajax_form" action="" enctype="multipart/form-data">
+<table> 
+<caption>{{now | date('d.m.Y') }}</caption>
+	<thead>
+	<tr class="thead2"><th>ФИО</th><th>Должность</th><th>Статус</th><th>Кол-во часов</th></tr>
+	</thead>
+	<tbody>
+	{% for p in pers %}
+		<tr class="perstr" id="{{ p.persID }}"><td> {{ p.fam }} {{ p.im }} {{ p.ot }}</td>
+			<td>{{ p.workname }}</td>	
+			<td><select name="statusID" class="statuses"><option value="-1" selected>...</option>
+				{% for s in statuses %}<option value="{{ s.id }}">{{ s.statusname }}</option>{% endfor %}</select></td>
+			<td><select name="hours" class="hours">
+				{% for h in hours %}<option value="{{ h }}">{{ h }}</option>{% endfor %}<option value="0" selected>0</option>
+			</select></td>
+			<input type="hidden" name="daynow" class="daynow" value="{{ now | date('Y-m-d') }}"></input>
+		</tr>
+	{% else %}
+		No users have been found.
+	{% endfor %}
+	</tbody>
+</table>
+<button type="submit">Отправить</button>
+</form>
+{% endblock %}
+ 
+</div>
+{% endblock %}
