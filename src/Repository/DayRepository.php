@@ -54,6 +54,21 @@ class DayRepository extends ServiceEntityRepository
         return $query->getResult();
     }
 
+	public function findIndividualDay($targetDay, $persID): ?array
+    {
+		$entityManager = $this->getEntityManager();
+        $query = $entityManager->createQuery(
+            'SELECT d.id as dayID, s.statusname, d.hours, d.kpi, d.total, d.daynow
+            FROM App\Entity\Day d
+			JOIN d.statuses s 
+			WHERE d.daynow = :day
+			AND d.pers = :p
+			'
+        ) 
+		->setParameter('day', $targetDay)
+		->setParameter('p', $persID);
+        return $query->getResult();//OneOrNullResult();//getArrayResult();
+    }
 //    /**
 //     * @return Day[] Returns an array of Day objects
 //     */

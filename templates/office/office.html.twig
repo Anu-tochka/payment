@@ -1,5 +1,7 @@
 {% extends 'base.html.twig' %}
 
+{% block title %}Рабочее время сотрудников{% endblock %}
+
 {% block body %}
 
 {% block javascripts %}
@@ -11,7 +13,7 @@
 			workers.each(function(index, elem) {
 				$(elem).find('.statuses').change(function() {
 					let st = $(elem).find('.statuses').val();
-					console.log('status: ' + st);
+					// если это не рабочий день, не	командировка и не работа в выходной, то скрываем часы работы
 					if ( st==1 || st==5 || st==7) {
 						$(elem).find('.hours').removeClass('hidepass');
 					}
@@ -23,8 +25,6 @@
 			});
 			
 			$(".menuMonth").on("change", function(){
-			    console.log('menuMonth: ');
-			    console.log($(this).val());
 				location.assign($(this).val());
 			});
 
@@ -32,18 +32,17 @@
 				e.preventDefault();
 				let reqq = [];
 				workers.each(function() {
-				//	console.log('worker 1: ' + workers[0]);
 					let persID = $(this).attr('id');//.text();
 					let simple = {};
 					let hours = 0;
 					let ho = '';
-					console.log('persID: ' + persID);
 					simple.persID = persID;
 					simple.daynow = $(this).find('.daynow').val();
 					simple.statusID = $(this).find('.statuses').val();
-					if (simple.statusID >0) {
+					
+					// если по кому-то не заполнено, то не отправляем
+					if (simple.statusID >0) { 
 						ho = $(this).find('.hours').val();
-						console.log('hours: ' + ho);
 						hours = (Number(ho)).toFixed(1);
 						simple.hours = hours;
 						reqq.push(simple);
@@ -55,6 +54,7 @@
 					method: 'post',
 					data: { reqq },
 					success: function(data){
+						// если информация занесена в базу, то не показываем сегодня больше форму а переадресуем на страницу месяца
 						location.assign("/office/showMonth/"+m);
 					}
 				});
@@ -71,6 +71,8 @@
 		{% for a in curmonthes %}<option value="/office/showMonth/{{ a.n }}">{{ a.im }}</option>{% endfor %}
 	</select>
 </div>
+{% block headline %} 
+{% endblock %}
 </div>
 
 <div class="main">

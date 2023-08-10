@@ -8,6 +8,7 @@
 			function sethours() {
 				let st = $('#popup-status').val();
 				console.log('status: ' + st);
+				// если это не рабочий день, не	командировка и не работа в выходной, то скрываем часы работы
 				if ( st==1 || st==5 || st==7) {
 					$('#popup-hours').removeClass('hidepass');
 				}
@@ -21,14 +22,12 @@
 			$('#popup').find('#popup-status').change(sethours);
 			
 			$(".menuMonth").on("change", function(){
-			    console.log('menuMonth: ');
-			    console.log($(this).val());
 				location.assign($(this).val());
 			});
 
 			$(".monthbutton").click(function() {
 				let status = $(this).attr('data-status');
-				console.log('status:*' + status+ '*');
+				console.log('monthbutton*');
 				let dayID = $(this).attr('id');//.text();
 				console.log('dayID: ' + dayID);
 				let myUrl = "";
@@ -107,7 +106,7 @@
 {% endblock %}
 
 {% block headline %}
-<h1 data-month="{{ targetm.n }}">Работа административного отдела за {{ targetm.im }}</h1>
+<h1 data-month="{{ targetm.n }}">Работа персонала за {{ targetm.im }}</h1>
 {% endblock %} 
 {% block main %} 
 <div class="monthtable">

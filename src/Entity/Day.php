@@ -26,12 +26,12 @@ class Day
     #[ORM\Column(nullable: true)]
     private ?float $total = null;
 
-    #[ORM\ManyToOne(inversedBy: 'pers')]
+    #[ORM\ManyToOne(inversedBy: 'days')]
     private ?Status $statuses = null;
 
     #[ORM\ManyToOne(inversedBy: 'days')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?pers $pers = null;
+    private ?Pers $pers = null;
 
     public function getId(): ?int
     {

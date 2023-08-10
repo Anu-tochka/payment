@@ -47,12 +47,12 @@ class OfficeController extends AbstractController
 		$this->now = date("Y-m-d");
 		$this->currentY = date("Y");
 		$this->currentM = date("m");
-		$this->hours = [12,11,10,9,8, 7, 6, 5, 4];
+		$this->hours = [12,11,10,9,8, 7, 6, 5, 4]; // часы работы
     }
   
 	public function getMonthes() {
 		
-		foreach ($this->am as $key => $value) { //($this->currentM + 1) ; $i++) {
+		foreach ($this->am as $key => $value) { 
 			$this->monthes[$key] = $value;
 			if ($key == $this->currentM) break;
 		}
@@ -72,11 +72,14 @@ class OfficeController extends AbstractController
 			$persIDList[$i] = $value['persID'];
 			$i++;
 		}
+		// проверяем, была ли отправлена информация о работе сотрудников сегодня
         $isWorkToday = $doctrine->getRepository(Day::class)->isWorkToday($now,$persIDList);
 		$count = count($isWorkToday);
+		// если была, то переадресуем на страницу с данными за весь месяц
 		if ($count > 0) {
 			return $this->redirectToRoute('app_showMonth', ['monthN' => $currentM]);
 		}
+		// если ещё не отправляли, то показываем страницу с формой
 		else {
 			$statuses = $doctrine->getRepository(Status::class)->findAll();
 			return $this->render('office/office.html.twig', [
@@ -115,11 +118,9 @@ class OfficeController extends AbstractController
 		}
         $pers = $doctrine->getRepository(Pers::class)->findAll();
 	
-			$serializer = $this->get('serializer');
-			$json = $serializer->serialize($pers, 'json');
-
 		    $response = new Response();
-			return $this->render('Office/month.html.twig', [ 'pers' => $pers, 
+			return $this->render('Office/month.html.twig', [ 
+				'pers' => $pers, 
 				'statuses' =>$dayList, 
 				'year' => $this->currentY,
 				'count' => $i, 
@@ -127,13 +128,12 @@ class OfficeController extends AbstractController
 				]);
     }
 		
-	/**
-	* @Route("/office/showMonth/{monthN}", name="app_showMonth")
-	*/
+	// данные о работе сотрудников за месяц
+	 #[Route('/office/showMonth/{monthN}', name: 'app_showMonth')]	
 	public function showMonth($monthN, ManagerRegistry $doctrine): Response	
     {
 		$persDays = array();
-        $persList = $doctrine->getRepository(Pers::class)->findAllOffice();
+        $persList = $doctrine->getRepository(Pers::class)->findAllPersonal();
 		$dayList = [];	
 		$countDays = cal_days_in_month(CAL_GREGORIAN, $this->currentM, $this->currentY);
 		$today = $this->currentY."-".$monthN;	
@@ -156,11 +156,12 @@ class OfficeController extends AbstractController
 			foreach ($dayList as $keyD => $valueD) {
 				$dd = $doctrine->getRepository(Day::class)->findIndividualDay($valueD,$p);
 				$exp = [];
-				$data[$valueD] = array('daynow' => $valueD,'find' => $dd);//array('dayID' => $p, 'data' => $data);//$serializer->serialize($dd, 'json');//[$targetDay] = 
+				$data[$valueD] = array('daynow' => $valueD,'find' => $dd);
 			}
-			$persDays[$key] = array('persID' => $p, 'fio' => $fio, 'work' => $value['workname'], 'data' => $data);//resp.'</div>';//getDay;
+			$persDays[$key] = array('persID' => $p, 'fio' => $fio, 'work' => $value['workname'], 'data' => $data);
 		}
-        return $this->render('office/month.html.twig', ['pers' => $persList, 
+        return $this->render('office/month.html.twig', [
+			'pers' => $persList, 
 			'day' => $dayList, 
 			'today' => $today,
 			'now' => $this->now,  
@@ -172,6 +173,51 @@ class OfficeController extends AbstractController
 			'hours' => $this->hours,
         ]);
 		
+    }
+		
+	#[Route('/office/insertDay/{targetDay}/{persID}', name: 'app_insertDay')]
+	public function insertDay($targetDay, $persID, ManagerRegistry $doctrine, Request $request): Response
+    {
+		$curmonthes = OfficeController::getMonthes();
+		$id = $request->get("persID");
+		$targetDay = $request->get("targetDay");
+		$tDay = date_create_from_format('Y-m-d',$targetDay);
+        $entity = $doctrine->getManager();
+		$lastId = '';
+		if ($request->request){
+			$dayList = new Day();
+			$dayList->setDaynow($tDay);
+			$dayList->setPers($doctrine->getRepository(Pers::class)->find($id));
+			$dayList->setHours($request->request->get('hours'));
+			$dayList->setStatuses($doctrine->getRepository(Status::class)->find($request->request->get('statusID')));
+			if ($request->request->get('total')) $dayList->setTotal((float)$request->request->get('total'));
+			$entity->persist($dayList);
+			$entity->flush();
+			$lastId = $dayList->getId(); // we can now get the Id
+			$entity->clear();
+		
+		}	
+		return new Response($lastId);	
+    }
+		
+	#[Route('/office/correctDay/{dayID}', name: 'app_correctDay')]
+	public function correctDay($dayID, ManagerRegistry $doctrine, Request $request): Response
+    {
+		$curmonthes = OfficeController::getMonthes();
+		$id = $request->get("dayID");
+        $entity = $doctrine->getManager();
+		$lastId = '';
+		if ($request->request){
+			$dayList = $entity->getRepository(Day::class)->find($id);
+			$dayList->setHours($request->request->get('hours'));
+			$dayList->setStatuses($doctrine->getRepository(Status::class)->find($request->request->get('statusID')));
+			if ($request->request->get('total')) $dayList->setTotal((float)$request->request->get('total'));
+			$entity->flush();
+			$lastId = $dayList->getId(); // we can now get the Id
+			$entity->clear();
+		
+		}	
+		return new Response($lastId);	
     }
 	
 }
